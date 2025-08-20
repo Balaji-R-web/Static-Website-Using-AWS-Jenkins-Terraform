@@ -5,17 +5,16 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-south-1'
     }
 
-    stages {
-        stage('Terraform Init & Apply') {
-            steps {
-                withAWS(credentials: 'aws-access-key', region: "${AWS_DEFAULT_REGION}") {
-                    dir('infra') {
-                        sh 'terraform init -input=false'
-                        sh 'terraform apply -auto-approve -input=false'
-                    }
-                }
-            }
+    stage('Terraform Init & Apply') {
+    steps {
+        withAWS(region: 'ap-south-1', credentials: 'aws-credentials') {
+            sh '''
+                terraform init -input=false
+                terraform apply -auto-approve -input=false
+            '''
         }
+    }
+}
 
         stage('Upload Site to S3') {
             steps {
@@ -31,3 +30,6 @@ pipeline {
         }
     }
 }
+
+
+
