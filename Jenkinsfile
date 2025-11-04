@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/Balaji-R-web/Static-Website-Using-AWS-Jenkins-Terraform.git'
+              git branch: 'main', url: 'https://github.com/Balaji-R-web/Static-Website-Using-AWS-Jenkins-Terraform.git'
             }
         }
 
