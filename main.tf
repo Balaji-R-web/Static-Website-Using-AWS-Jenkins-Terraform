@@ -77,7 +77,4 @@ resource "aws_s3_object" "js_files" {
   content_type = "application/javascript"
 }
 
-# Output the website URL
-output "website_url" {
-  value = aws_s3_bucket_website_configuration.website.website_endpoint
-}
+
