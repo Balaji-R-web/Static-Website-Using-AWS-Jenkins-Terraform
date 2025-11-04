@@ -1,0 +1,43 @@
+
+pipeline {
+    agent any
+
+    environment {
+        AWS_ACCESS_KEY_ID     = credentials('aws-accesskey')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secretkey')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/Balaji-R-web/Static-Website-Using-AWS-Jenkins-Terraform.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply -auto-approve'
+            }
+        }
+
+        stage('Website URL') {
+            steps {
+                sh 'terraform output website_url'
+            }
+        }
+    }
+}
+
+
