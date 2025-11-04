@@ -34,8 +34,9 @@ resource "aws_s3_bucket_policy" "public_policy" {
 }
 
 # Enable static website hosting
-resource "aws_s3_bucket_website_configuration" "website" {
-  bucket = aws_s3_bucket.static_website.id
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "my-static-website-bucket"
+  
 
   index_document {
     suffix = "index.html"
@@ -76,5 +77,6 @@ resource "aws_s3_object" "js_files" {
   etag         = filemd5("${path.module}/${each.value}")
   content_type = "application/javascript"
 }
+
 
 
