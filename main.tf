@@ -1,13 +1,17 @@
 provider "aws" {
-  region = "ap-south-1" # change to your region
+  region = "ap-south-1"
 }
 
-# Create S3 bucket
+# ------------------------------
+# 1. Create S3 bucket
+# ------------------------------
 resource "aws_s3_bucket" "static_website" {
-  bucket = "balaji-static-website-bucket-12345"  # change bucket name (must be globally unique)
+  bucket = "balaji-static-website-bucket-12345"  # must be globally unique
 }
 
-# Enable public access for website hosting
+# ------------------------------
+# 2. Public access configuration
+# ------------------------------
 resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket                  = aws_s3_bucket.static_website.id
   block_public_acls       = false
@@ -16,7 +20,9 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   restrict_public_buckets = false
 }
 
-# Allow public read access to objects
+# ------------------------------
+# 3. Bucket policy (public read)
+# ------------------------------
 resource "aws_s3_bucket_policy" "public_policy" {
   bucket = aws_s3_bucket.static_website.id
   policy = jsonencode({
@@ -33,10 +39,11 @@ resource "aws_s3_bucket_policy" "public_policy" {
   })
 }
 
-# Enable static website hosting
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = "my-static-website-bucket"
-  
+# ------------------------------
+# 4. Website configuration (new style)
+# ------------------------------
+resource "aws_s3_bucket_website_configuration" "website_config" {
+  bucket = aws_s3_bucket.static_website.id
 
   index_document {
     suffix = "index.html"
@@ -47,8 +54,10 @@ resource "aws_s3_bucket" "my_bucket" {
   }
 }
 
-# Upload all website files
-resource "aws_s3_object" "website_files" {
+# ------------------------------
+# 5. Upload HTML files
+# ------------------------------
+resource "aws_s3_object" "html_files" {
   for_each = fileset("${path.module}", "*.html")
 
   bucket       = aws_s3_bucket.static_website.id
@@ -58,6 +67,9 @@ resource "aws_s3_object" "website_files" {
   content_type = "text/html"
 }
 
+# ------------------------------
+# 6. Upload CSS files
+# ------------------------------
 resource "aws_s3_object" "css_files" {
   for_each = fileset("${path.module}", "*.css")
 
@@ -68,6 +80,9 @@ resource "aws_s3_object" "css_files" {
   content_type = "text/css"
 }
 
+# ------------------------------
+# 7. Upload JS files
+# ------------------------------
 resource "aws_s3_object" "js_files" {
   for_each = fileset("${path.module}", "*.js")
 
@@ -77,6 +92,5 @@ resource "aws_s3_object" "js_files" {
   etag         = filemd5("${path.module}/${each.value}")
   content_type = "application/javascript"
 }
-
 
 
